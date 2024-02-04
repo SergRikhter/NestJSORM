@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  nest-orm:
+    build: ./nest-orm
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    command: sh -c "npm install && npm run start:dev"
+    volumes:
+      - ./nest-orm:/usr/src/app
+    environment:
+      - NAME=Nest
+    networks:
+      - nestORM
+ 
+  db:
+    image: 'mysql/mysql-server:latest'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password!23'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: 'example'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - './volumes/database:/var/lib/mysql' 
+    ports:
+      - "3307:3306"  
+    networks:
+      - nestORM
+
+networks:
+  nestORM:
+    driver: bridge
+
